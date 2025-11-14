@@ -1,18 +1,23 @@
 module github.com/octohelm/enumeration
 
-go 1.23.4
+go 1.25.4
 
-require (
-	github.com/go-courier/logr v0.3.1
-	github.com/octohelm/gengo v0.0.0-20250115090809-c4a42272490b
-	github.com/octohelm/x v0.0.0-20241220070034-8d4a9441b90a
+tool (
+	github.com/octohelm/enumeration/internal/cmd/fmt
+	github.com/octohelm/enumeration/internal/cmd/gen
 )
 
 require (
-	github.com/go-json-experiment/json v0.0.0-20240815175050-ebd3a8989ca1 // indirect
-	github.com/onsi/gomega v1.35.1 // indirect
-	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
-	golang.org/x/tools v0.28.0 // indirect
+	github.com/octohelm/gengo v0.0.0-20251114091141-71223c119bda
+	github.com/octohelm/x v0.0.0-20251028032356-02d7b8d1c824
+)
+
+require (
+	github.com/go-json-experiment/json v0.0.0-20251027170946-4849db3c2f7e // indirect
+	github.com/google/go-cmp v0.7.0 // indirect
+	golang.org/x/mod v0.30.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/tools v0.39.0 // indirect
+	mvdan.cc/gofumpt v0.9.2 // indirect
 )

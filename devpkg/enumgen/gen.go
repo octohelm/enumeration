@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"go/types"
 
-	"github.com/octohelm/enumeration/pkg/enumeration"
-	"github.com/octohelm/enumeration/pkg/scanner"
 	"github.com/octohelm/gengo/pkg/gengo"
 	"github.com/octohelm/gengo/pkg/gengo/snippet"
+
+	"github.com/octohelm/enumeration/pkg/enumeration"
+	"github.com/octohelm/enumeration/pkg/scanner"
 )
 
 func init() {
@@ -32,12 +33,12 @@ func (*enumGen) New(ctx gengo.Context) gengo.Generator {
 }
 
 func (g *enumGen) GenerateType(c gengo.Context, named *types.Named) error {
-	if enum, ok := g.enumTypes.ResolveEnumType(named); ok {
-		if enum.IsIntStringer() {
-			g.genIntStringerEnums(c, named, enum)
+	if enumType, ok := g.enumTypes.ResolveEnumType(named); ok {
+		if enumType.IsIntStringer() {
+			g.genIntStringerEnums(c, named, enumType)
 			return nil
 		}
-		g.genEnums(c, named, enum)
+		g.genEnums(c, named, enumType)
 	}
 	return nil
 }
@@ -46,10 +47,10 @@ func (g *enumGen) genEnums(c gengo.Context, named *types.Named, enum *EnumType) 
 	options := make([]Option, len(enum.Constants))
 	tpeObj := named.Obj()
 
-	for i := range enum.Constants {
-		options[i].Name = enum.Constants[i].Name()
-		options[i].Value = fmt.Sprintf("%v", enum.Value(enum.Constants[i]))
-		options[i].Label = enum.Label(enum.Constants[i])
+	for i, c := range enum.Constants {
+		options[i].Name = c.Name()
+		options[i].Label = enum.Label(c)
+		options[i].Value = fmt.Sprintf("%v", enum.Value(c))
 	}
 
 	c.RenderT(`
@@ -109,8 +110,7 @@ func (v @Type) Label() string {
 					}
 					return
 				}
-
-				if !yield(snippet.Value("")) {
+				if !yield(snippet.ID(fmt.Sprintf("*new(%s)", typ.Name()))) {
 					return
 				}
 				return
@@ -195,8 +195,6 @@ func (v @Type) IsZero() bool {
 func (v @Type) String() string {
 	switch v {
 		@constToStrValueCases
-		case @ConstUnknown:
-            return "UNKNOWN"
 		default:
 			return @fmtSprintf("UNKNOWN_%d", v)
 	}
@@ -211,8 +209,7 @@ func (v @Type) String() string {
 				}
 				return
 			}
-
-			if !yield(snippet.Value("")) {
+			if !yield(snippet.ID(fmt.Sprintf("*new(%s)", tpeObj.Name()))) {
 				return
 			}
 
@@ -225,13 +222,19 @@ func (v @Type) String() string {
 		"strValueToConstCases": snippet.Snippets(func(yield func(snippet.Snippet) bool) {
 			for _, o := range options {
 				if !yield(snippet.Sprintf("case %v:\n\treturn %T, nil\n", o.Value, o.Name)) {
+					return
 				}
 			}
-
 		}),
 		"constToStrValueCases": snippet.Snippets(func(yield func(snippet.Snippet) bool) {
 			for _, o := range options {
 				if !yield(snippet.Sprintf("case %T:\n\treturn %v\n", o.Name, o.Value)) {
+				}
+			}
+
+			if enum.ConstUnknown != nil && enum.ConstUnknown.String() != "" {
+				if !yield(snippet.Sprintf("case %T:\n\treturn %v\n", enum.ConstUnknown, enum.Value(enum.ConstUnknown))) {
+					return
 				}
 			}
 		}),

@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 
-	"github.com/go-courier/logr"
-	"github.com/go-courier/logr/slog"
 	"github.com/octohelm/gengo/pkg/gengo"
+	"github.com/octohelm/x/logr"
+	"github.com/octohelm/x/logr/slog"
+)
 
+import (
 	_ "github.com/octohelm/enumeration/devpkg/enumgen"
 )
 

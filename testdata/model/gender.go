@@ -16,3 +16,14 @@ const (
 	GENDER_EXT__MALE   GenderExt = "MAIL"   // 男
 	GENDER_EXT__FEMALE GenderExt = "FEMALE" // 女
 )
+
+// +gengo:enum
+// +gengo:enum:value-from=ConstName
+// +gengo:enum:const-unknown-name=ILLEGAL
+type Token int
+
+const (
+	ILLEGAL Token = iota
+	EOF
+	COMMENT
+)

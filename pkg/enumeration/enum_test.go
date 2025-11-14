@@ -1,10 +1,11 @@
 package enumeration_test
 
 import (
-	"github.com/octohelm/enumeration/pkg/scanner"
 	"testing"
 
 	testingx "github.com/octohelm/x/testing"
+
+	"github.com/octohelm/enumeration/pkg/scanner"
 )
 
 func TestScanEnum(t *testing.T) {

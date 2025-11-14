@@ -1,4 +1,3 @@
 package scanner
 
-type P struct {
-}
+type P struct{}

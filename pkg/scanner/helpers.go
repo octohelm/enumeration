@@ -1,6 +1,8 @@
 package scanner
 
-import "strconv"
+import (
+	"strconv"
+)
 
 func ScanEnum(src any, offset int) (int, error) {
 	return ScanIntEnumStringer(src, offset)

@@ -2,7 +2,7 @@ package enumgen
 
 import (
 	"fmt"
-
+	"go/ast"
 	"go/constant"
 	"go/types"
 	"sort"
@@ -11,6 +11,24 @@ import (
 
 	"github.com/octohelm/gengo/pkg/gengo"
 )
+
+type ValueFrom int
+
+const (
+	ValueFromConstName ValueFrom = iota
+	ValueFromConstNameSuffix
+	ValueFromConstValue
+)
+
+func ParseValueFrom(s string) ValueFrom {
+	switch s {
+	case "ConstNameSuffix":
+		return ValueFromConstNameSuffix
+	case "ConstValue":
+		return ValueFromConstValue
+	}
+	return ValueFromConstName
+}
 
 type EnumTypes map[string]map[types.Type]*EnumType
 
@@ -38,7 +56,24 @@ func (e EnumTypes) Walk(gc gengo.Context, inPkgPath string) {
 		constv := constants[k]
 
 		if e[inPkgPath][constv.Type()] == nil {
-			e[inPkgPath][constv.Type()] = &EnumType{}
+			named := constv.Type().(*types.Named)
+
+			et := &EnumType{
+				ValueFrom:        ValueFromConstNameSuffix,
+				ConstUnknownName: fmt.Sprintf("%s_UNKNOWN", gengo.UpperSnakeCase(named.Obj().Name())),
+			}
+
+			opts := gc.OptsOf(named.Obj(), "enum")
+
+			if valueFrom, ok := opts.Get("valueFrom"); ok {
+				et.ValueFrom = ParseValueFrom(valueFrom)
+			}
+
+			if constUnknownName, ok := opts.Get("constUnknownName"); ok {
+				et.ConstUnknownName = constUnknownName
+			}
+
+			e[inPkgPath][constv.Type()] = et
 		}
 
 		e[inPkgPath][constv.Type()].Add(constv, p.Comment(constv.Pos())...)
@@ -46,6 +81,9 @@ func (e EnumTypes) Walk(gc gengo.Context, inPkgPath string) {
 }
 
 type EnumType struct {
+	ValueFrom        ValueFrom
+	ConstUnknownName string
+
 	ConstUnknown *types.Const
 	Constants    []*types.Const
 	Comments     map[*types.Const][]string
@@ -69,10 +107,19 @@ func (e *EnumType) Label(cv *types.Const) string {
 
 func (e *EnumType) Value(cv *types.Const) any {
 	if named, ok := cv.Type().(*types.Named); ok {
-		parts := strings.SplitN(cv.Name(), "__", 2)
-
-		if len(parts) == 2 && parts[0] == gengo.UpperSnakeCase(named.Obj().Name()) {
-			return parts[1]
+		switch e.ValueFrom {
+		case ValueFromConstName:
+			return cv.Name()
+		case ValueFromConstNameSuffix:
+			parts := strings.SplitN(cv.Name(), "__", 2)
+			if len(parts) == 2 && parts[0] == gengo.UpperSnakeCase(named.Obj().Name()) {
+				return parts[1]
+			}
+			if strings.HasSuffix(cv.Name(), "_UNKNOWN") {
+				return "UNKNOWN"
+			}
+		case ValueFromConstValue:
+			//
 		}
 	}
 
@@ -94,11 +141,16 @@ func (e *EnumType) Add(cv *types.Const, comments ...string) {
 
 	n := cv.Name()
 
+	// skip internal
+	if !ast.IsExported(n) {
+		return
+	}
+
 	if n[0] == '_' {
 		return
 	}
 
-	if strings.HasSuffix(n, "_UNKNOWN") {
+	if n == e.ConstUnknownName {
 		e.ConstUnknown = cv
 		return
 	}

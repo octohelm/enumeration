@@ -56,21 +56,23 @@ func (e EnumTypes) Walk(gc gengo.Context, inPkgPath string) {
 		constv := constants[k]
 
 		if e[inPkgPath][constv.Type()] == nil {
-			named := constv.Type().(*types.Named)
-
 			et := &EnumType{
-				ValueFrom:        ValueFromConstNameSuffix,
-				ConstUnknownName: fmt.Sprintf("%s_UNKNOWN", gengo.UpperSnakeCase(named.Obj().Name())),
+				ValueFrom: ValueFromConstNameSuffix,
 			}
 
-			opts := gc.OptsOf(named.Obj(), "enum")
+			switch named := constv.Type().(type) {
+			case *types.Named:
+				et.ConstUnknownName = fmt.Sprintf("%s_UNKNOWN", gengo.UpperSnakeCase(named.Obj().Name()))
 
-			if valueFrom, ok := opts.Get("valueFrom"); ok {
-				et.ValueFrom = ParseValueFrom(valueFrom)
-			}
+				opts := gc.OptsOf(named.Obj(), "enum")
 
-			if constUnknownName, ok := opts.Get("constUnknownName"); ok {
-				et.ConstUnknownName = constUnknownName
+				if valueFrom, ok := opts.Get("valueFrom"); ok {
+					et.ValueFrom = ParseValueFrom(valueFrom)
+				}
+
+				if constUnknownName, ok := opts.Get("constUnknownName"); ok {
+					et.ConstUnknownName = constUnknownName
+				}
 			}
 
 			e[inPkgPath][constv.Type()] = et

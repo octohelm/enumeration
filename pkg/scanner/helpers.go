@@ -4,10 +4,12 @@ import (
 	"strconv"
 )
 
+// ScanEnum 将数据库值或外部输入转换为去偏移后的枚举索引。
 func ScanEnum(src any, offset int) (int, error) {
 	return ScanIntEnumStringer(src, offset)
 }
 
+// ScanIntEnumStringer 将整数或字符串输入解析为去偏移后的枚举索引。
 func ScanIntEnumStringer(src any, offset int) (int, error) {
 	n, err := toInteger(src, offset)
 	if err != nil {

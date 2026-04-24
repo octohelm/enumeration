@@ -15,11 +15,15 @@ import (
 type ValueFrom int
 
 const (
+	// ValueFromConstName 使用常量名作为生成值。
 	ValueFromConstName ValueFrom = iota
+	// ValueFromConstNameSuffix 使用常量名去掉类型前缀后的后缀部分作为生成值。
 	ValueFromConstNameSuffix
+	// ValueFromConstValue 使用常量字面值作为生成值。
 	ValueFromConstValue
 )
 
+// ParseValueFrom 将配置字符串解析为取值策略。
 func ParseValueFrom(s string) ValueFrom {
 	switch s {
 	case "ConstNameSuffix":
@@ -30,8 +34,10 @@ func ParseValueFrom(s string) ValueFrom {
 	return ValueFromConstName
 }
 
+// EnumTypes 按包路径和目标类型维护枚举元数据索引。
 type EnumTypes map[string]map[types.Type]*EnumType
 
+// ResolveEnumType 根据类型查找已收集的枚举元数据。
 func (e EnumTypes) ResolveEnumType(t types.Type) (*EnumType, bool) {
 	if n, ok := t.(*types.Named); ok {
 		if enumTypes, ok := e[n.Obj().Pkg().Path()]; ok && enumTypes != nil {
@@ -43,6 +49,7 @@ func (e EnumTypes) ResolveEnumType(t types.Type) (*EnumType, bool) {
 	return nil, false
 }
 
+// Walk 遍历指定包的常量并收集枚举元数据。
 func (e EnumTypes) Walk(gc gengo.Context, inPkgPath string) {
 	p := gc.Package(inPkgPath)
 
@@ -82,6 +89,7 @@ func (e EnumTypes) Walk(gc gengo.Context, inPkgPath string) {
 	}
 }
 
+// EnumType 描述单个枚举类型的生成期元数据。
 type EnumType struct {
 	ValueFrom        ValueFrom
 	ConstUnknownName string
@@ -91,10 +99,12 @@ type EnumType struct {
 	Comments     map[*types.Const][]string
 }
 
+// IsIntStringer 返回当前枚举是否可生成 int stringer 风格辅助方法。
 func (e *EnumType) IsIntStringer() bool {
 	return e.ConstUnknown != nil && len(e.Constants) > 0
 }
 
+// Label 返回常量对应的人类可读标签。
 func (e *EnumType) Label(cv *types.Const) string {
 	if comments, ok := e.Comments[cv]; ok {
 		label := strings.Join(comments, "")
@@ -107,6 +117,7 @@ func (e *EnumType) Label(cv *types.Const) string {
 	return fmt.Sprintf("%v", e.Value(cv))
 }
 
+// Value 返回常量对应的生成值。
 func (e *EnumType) Value(cv *types.Const) any {
 	if named, ok := cv.Type().(*types.Named); ok {
 		switch e.ValueFrom {
@@ -136,6 +147,7 @@ func (e *EnumType) Value(cv *types.Const) any {
 	return s
 }
 
+// Add 向当前枚举元数据中注册一个常量。
 func (e *EnumType) Add(cv *types.Const, comments ...string) {
 	if e.Comments == nil {
 		e.Comments = map[*types.Const][]string{}

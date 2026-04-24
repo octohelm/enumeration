@@ -233,7 +233,7 @@ func (v @Type) String() string {
 			}
 
 			if enum.ConstUnknown != nil && enum.ConstUnknown.String() != "" {
-				if !yield(snippet.Sprintf("case %T:\n\treturn %v\n", enum.ConstUnknown, enum.Value(enum.ConstUnknown))) {
+				if !yield(snippet.Sprintf("case %T:\n\treturn %v\n", enum.ConstUnknown, fmt.Sprintf("%v", enum.Value(enum.ConstUnknown)))) {
 					return
 				}
 			}

@@ -27,3 +27,25 @@ const (
 	EOF
 	COMMENT
 )
+
+// +gengo:enum
+// +gengo:enum:value-from=ConstValue
+type Color int
+
+const (
+	COLOR_UNKNOWN Color = 0
+	COLOR__RED    Color = 100
+	COLOR__GREEN  Color = 200
+	COLOR__BLUE   Color = 300
+)
+
+// +gengo:enum
+// +gengo:enum:const-unknown-name=FLAG_NONE
+type Flag int
+
+const (
+	FLAG_NONE Flag = iota
+	FLAG__READ
+	FLAG__WRITE
+	FLAG__EXEC
+)

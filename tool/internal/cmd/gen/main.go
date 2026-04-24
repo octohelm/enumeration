@@ -15,7 +15,7 @@ import (
 func main() {
 	c, err := gengo.NewContext(&gengo.GeneratorArgs{
 		Entrypoint: []string{
-			"github.com/octohelm/enumeration/testdata/model",
+			"github.com/octohelm/enumeration/devpkg/enumgen/testdata/model",
 		},
 		OutputFileBaseName: "zz_generated",
 		Globals: map[string][]string{

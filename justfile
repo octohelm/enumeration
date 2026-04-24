@@ -1,17 +1,5 @@
-tidy: gen fmt
-    go mod tidy
+mod go 'tool/go/justfile'
 
-test:
-    CGO_ENABLED=0 go test -failfast -v ./...
-
-test-race:
-    CGO_ENABLED=1 go test -v -race ./...
-
-fmt:
-    go tool fmt .
-
-dep:
-    go get -u ./...
-
-gen:
-    go tool gen
+# 列出 root 与子模块的稳定执行入口。
+default:
+    just --list --list-submodules

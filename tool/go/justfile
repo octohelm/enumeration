@@ -1,0 +1,26 @@
+export INFRA_CLI_DEBUG := "1"
+
+# 整理并归一化 Go 模块依赖。
+[no-cd]
+dep:
+    go mod tidy
+
+# 更新当前模块的直接与间接依赖。
+[no-cd]
+update:
+    go get -u ./...
+
+# 运行 Go 测试；默认覆盖全部包。
+[no-cd]
+test path='./...' *args:
+    go test -count=1 -failfast {{ args }} {{ path }}
+
+# 执行 Go 格式化入口。
+[no-cd]
+fmt path='./...':
+    go tool fmt {{ path }}
+
+# 运行代码生成入口。
+[no-cd]
+gen path='./...' *args:
+    go generate {{ args }} {{ path }}

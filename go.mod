@@ -8,8 +8,8 @@ tool (
 )
 
 require (
-	github.com/octohelm/gengo v0.0.0-20260429071238-a7c74f0d08fb
-	github.com/octohelm/x v0.0.0-20260508075008-3bb151cb7bd8
+	github.com/octohelm/gengo v0.0.0-20260508104904-5ab1a7f587f6
+	github.com/octohelm/x v0.0.0-20260508104609-6b72a870e0d2
 )
 
 require (

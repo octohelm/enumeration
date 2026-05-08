@@ -35,7 +35,8 @@ func TestScanIntEnumStringer(t *testing.T) {
 
 		for _, tt := range testCases {
 			t.Run(tt.name, func(t *testing.T) {
-				Then(t, "应返回去偏移后的索引",
+				Then(
+					t, "应返回去偏移后的索引",
 					ExpectMustValue(func() (int, error) {
 						return ScanIntEnumStringer(tt.input, offset)
 					}, Equal(tt.expect)),
@@ -45,7 +46,8 @@ func TestScanIntEnumStringer(t *testing.T) {
 	})
 
 	t.Run("非法字符串返回错误并保留偏移值", func(t *testing.T) {
-		Then(t, "应返回解析错误",
+		Then(
+			t, "应返回解析错误",
 			ExpectDo(func() error {
 				got, err := ScanIntEnumStringer("invalid", -2)
 				if got != -2 {
@@ -58,7 +60,8 @@ func TestScanIntEnumStringer(t *testing.T) {
 }
 
 func TestScanEnum(t *testing.T) {
-	Then(t, "应复用整数枚举扫描逻辑",
+	Then(
+		t, "应复用整数枚举扫描逻辑",
 		ExpectMustValue(func() (int, error) {
 			return ScanEnum("3", 1)
 		}, Equal(2)),

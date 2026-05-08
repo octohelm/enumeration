@@ -8,8 +8,8 @@ tool (
 )
 
 require (
-	github.com/octohelm/gengo v0.0.0-20260423102458-7653461bdb71
-	github.com/octohelm/x v0.0.0-20260423102402-017813b113b1
+	github.com/octohelm/gengo v0.0.0-20260429071238-a7c74f0d08fb
+	github.com/octohelm/x v0.0.0-20260508075008-3bb151cb7bd8
 )
 
 require (
@@ -19,5 +19,5 @@ require (
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect
-	mvdan.cc/gofumpt v0.9.2 // indirect
+	mvdan.cc/gofumpt v0.10.0 // indirect
 )

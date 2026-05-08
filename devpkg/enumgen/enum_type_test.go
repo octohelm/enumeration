@@ -24,7 +24,8 @@ func TestParseValueFrom(t *testing.T) {
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			Then(t, "应解析为预期策略",
+			Then(
+				t, "应解析为预期策略",
 				Expect(ParseValueFrom(tt.input), Equal(tt.expect)),
 			)
 		})
@@ -75,8 +76,10 @@ const hidden Gender = 99
 		}, &enumGen{})
 	})
 
-	Then(t, "应生成整数与字符串枚举辅助方法",
-		Expect(files, Be(testingutil.File("sample/zz_generated_test.enum.go",
+	Then(
+		t, "应生成整数与字符串枚举辅助方法",
+		Expect(files, Be(testingutil.File(
+			"sample/zz_generated_test.enum.go",
 			testingutil.Contains(
 				"var InvalidGender = errors.New(\"invalid Gender\")",
 				"func ParseGenderFromString(s string) (Gender, error)",
@@ -121,8 +124,10 @@ const (
 		}, &enumGen{})
 	})
 
-	Then(t, "ConstValue int 枚举应使用字面值作为 String 和 Parse 依据",
-		Expect(files, Be(testingutil.File("sample/zz_generated_test.enum.go",
+	Then(
+		t, "ConstValue int 枚举应使用字面值作为 String 和 Parse 依据",
+		Expect(files, Be(testingutil.File(
+			"sample/zz_generated_test.enum.go",
 			testingutil.Contains(
 				"return \"100\"",
 				"return \"200\"",
@@ -163,8 +168,10 @@ const (
 		}, &enumGen{})
 	})
 
-	Then(t, "自定义 ConstUnknownName 时应使用指定名称而非自动推导",
-		Expect(files, Be(testingutil.File("sample/zz_generated_test.enum.go",
+	Then(
+		t, "自定义 ConstUnknownName 时应使用指定名称而非自动推导",
+		Expect(files, Be(testingutil.File(
+			"sample/zz_generated_test.enum.go",
 			testingutil.Contains(
 				"MY_ZERO",
 				"func (v Level) IsZero() bool",
@@ -185,7 +192,8 @@ type Bad int
 		})
 	})
 
-	Then(t, "缺少常量时不应生成枚举文件",
+	Then(
+		t, "缺少常量时不应生成枚举文件",
 		ExpectDo(func() error {
 			files, err := m.Generate(gengo.GeneratorArgs{
 				Entrypoint:         []string{m.ImportPath("sample")},

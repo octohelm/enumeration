@@ -11,6 +11,13 @@
 - 提供用于验证生成结果的最小测试数据，位于 `testdata/`。
 - 仓库级协作约束与统一执行入口分别收敛到 `AGENTS.md` 与 `justfile`，不在 README 展开命令细节。
 
+## 快速开始
+
+```
+just go test  # 运行测试
+just go gen   # 运行代码生成
+```
+
 ## 从哪里开始
 
 - `pkg/enumeration`：运行期枚举接口与基础类型约束。
